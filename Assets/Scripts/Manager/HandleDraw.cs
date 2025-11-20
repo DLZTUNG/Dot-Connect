@@ -10,6 +10,7 @@ public class HandleDraw : MonoBehaviour
     [SerializeField] private VisualSystem m_visualSystem;
     [SerializeField] private Dot m_selectedDot;
     [SerializeField] private List<Vector2Int> m_currentPath;
+
     private void OnEnable()
     {
         m_inputManager.OnSelectDot += HandleSelectDot;
@@ -20,6 +21,7 @@ public class HandleDraw : MonoBehaviour
     private void HandleSelectDot(Dot dot)
     {
         m_selectedDot = dot;
+        Color dotColor = m_gridManager.colorDict[m_selectedDot.colorId];
         Dot sameDot = m_gridManager.GetSameColorDot(m_selectedDot);
         //Animation, sau này xử lí ở lớp khác
         m_selectedDot.OnSelected();
@@ -32,9 +34,10 @@ public class HandleDraw : MonoBehaviour
         }
         m_currentPath = new List<Vector2Int> { dot.gridPos };
 
-        m_visualSystem.CreatePreviewLine(m_gridManager.colorDict[m_selectedDot.colorId]);
+        m_visualSystem.CreatePreviewLine(dotColor);
         m_visualSystem.UpdatePreviewLine(GetListCenterPosOfPath(m_currentPath));
         m_visualSystem.UpdatePathPreview(m_currentPath, m_gridManager.colorDict[m_selectedDot.colorId]);
+        m_visualSystem.ShowCursorVisual(true, dotColor);
     }
 
     private void HandleDragDot()
@@ -67,7 +70,7 @@ public class HandleDraw : MonoBehaviour
         //Xử lí khi cắt line màu khác
         else if (!m_gridManager.IsCellValidForColor(hovered, colorId))
         {
-
+            if (m_gridManager.GetDotAt(hovered)) return;
             //Có thể cắt qua line của 1 dot hoặc line đã nối 2 dot
             Dot dotCheck1 = m_gridManager.GetDotByPosInConnection(hovered); //Dot chứa line đã cắt
             if (dotCheck1 == null) return;
@@ -79,7 +82,7 @@ public class HandleDraw : MonoBehaviour
         }
 
         //Xử lí khi hover sang ô cách xa ô hiện tại, dùng kết hợp pathfinding để linh hoạt
-        else if (!isAdjacent)
+        else if (!isAdjacent && m_gridManager.IsCellValidForColor(hovered, colorId))
         {
             Vector2Int closestPos = m_currentPath[0];
             int minDistance = Pathfinding.GetDistance(m_currentPath[0], hovered);
@@ -107,7 +110,7 @@ public class HandleDraw : MonoBehaviour
                 for (int i = 1; i < newPathSegment.Count; i++)
                 {
                     Vector2Int pos = newPathSegment[i];
-                    if (m_currentPath.Contains(pos) || !m_gridManager.IsCellValidForColor(pos, colorId))
+                    if (m_currentPath.Contains(pos) || !m_gridManager.IsCellValidForColor(pos, colorId) || m_gridManager.GetCellAt(pos).cellState != Enum.CellState.None)
                     {
                         isValid = false;
                         break;
@@ -129,6 +132,7 @@ public class HandleDraw : MonoBehaviour
 
         m_visualSystem.UpdatePreviewLine(GetListCenterPosOfPath(m_currentPath));
         m_visualSystem.UpdatePathPreview(m_currentPath, currColor);
+        m_visualSystem.ShowCursorVisual(true, currColor);
     }
 
     private void HandleReleaseDot()
@@ -165,9 +169,6 @@ public class HandleDraw : MonoBehaviour
         m_selectedDot.dotState = Enum.DotState.Connected;
         m_selectedDot.connection.AddRange(m_currentPath);
 
-        // Tạo đường permanent
-        m_visualSystem.CreateLinePermanent(GetListCenterPosOfPath(m_currentPath), colorId, lineColor);
-
         if (endDot != null && endDot.colorId == m_selectedDot.colorId)
         {
             //Nếu nối đúng thì set state và connection cho dot còn lại
@@ -183,9 +184,10 @@ public class HandleDraw : MonoBehaviour
         {
             Debug.Log("không hợp lệ");
         }
+        m_visualSystem.CreateLinePermanent(GetListCenterPosOfPath(m_currentPath), colorId, lineColor);
+        m_visualSystem.UpdatePathPreview(m_currentPath, Color.white);
+        m_visualSystem.ShowCursorVisual(false, Color.white);
         ClearData();
-
-
     }
 
     private void ResetDot(Dot dotReset)

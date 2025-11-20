@@ -33,7 +33,7 @@ MonoBehaviour:
     - line: '|   defaultScreenOrientation: 4'
     - line: '|   targetDevice: 2'
     - line: '|   useOnDemandResources: 0'
-    - line: '|   accelerometerFrequency: 60'
+    - line: '|   accelerometerFrequency: 100'
     - line: '|   companyName: DefaultCompany'
     - line: '|   productName: My project'
     - line: '|   defaultCursor: {instanceID: 0}'

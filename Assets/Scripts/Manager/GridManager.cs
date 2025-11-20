@@ -43,6 +43,8 @@ public class GridManager : MonoBehaviour
     {
         m_dotPairCount = Random.Range(4, 7);
         Initialize();
+
+        m_cameraController.AdjustCam(m_gridSizeX, m_gridSizeY, m_cellSize);
     }
 
     private void Initialize()
@@ -61,10 +63,10 @@ public class GridManager : MonoBehaviour
         }
 
         Pathfinding.CreateNodesByGrid(m_gridSizeX, m_gridSizeY);
-        /*foreach (var cell in m_cells)
+        foreach (var cell in m_cells)
         {
             Pathfinding.ChangeStateNode(cell.gridPos, cell.cellState);
-        }*/
+        }
     }
 
     private void SetGridState()
@@ -91,11 +93,6 @@ public class GridManager : MonoBehaviour
 
         GenerateDot(segments);
     }
-    private void LateUpdate()
-    {
-        m_cameraController.AdjustCam(m_gridSizeX, m_gridSizeY, m_cellSize);
-    }
-
     private void CreateGrid()
     {
         m_gridCells = new Transform[m_gridSizeX, m_gridSizeY];

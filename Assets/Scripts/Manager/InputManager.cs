@@ -4,6 +4,7 @@ using System;
 public class InputManager : MonoBehaviour
 {
     public event Action<Dot> OnSelectDot;
+    public event Action<Vector3> OnSelectLine;
     public event Action OnDragDot;
     public event Action OnReleaseDot;
 

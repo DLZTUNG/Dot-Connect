@@ -14,6 +14,8 @@ public class VisualSystem : MonoBehaviour
     private GameObject m_cursorPreviewObj;
     private Dictionary<Vector2Int, GameObject> m_dictCellPreviewObj = new Dictionary<Vector2Int, GameObject>();
     public Dictionary<int, LineRenderer> permanentLines = new Dictionary<int, LineRenderer>();
+    private bool m_isCursorVisible;
+
     private void Start()
     {
         m_cursorPreviewObj = Instantiate(m_cursorPreviewPrb, transform);
@@ -27,6 +29,28 @@ public class VisualSystem : MonoBehaviour
         m_dictCellPreviewObj.Add(gridPos, cellPreviewObj);
         cellPreviewObj.SetActive(false);
     }
+    public void ShowCursorVisual(bool isShow, Color color)
+    {
+        m_isCursorVisible = isShow;
+        Color temp = color;
+        temp.a = 0.2f;
+        m_cursorPreviewObj.GetComponent<SpriteRenderer>().color = temp;
+        m_cursorPreviewObj.SetActive(isShow);
+    }
+
+    private void Update()
+    {
+        if (!m_isCursorVisible) return;
+        UpdateCursorPosition();
+    }
+
+    private void UpdateCursorPosition()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0;
+        m_cursorPreviewObj.transform.position = mousePos;
+    }
+
 
     public void UpdatePathPreview(List<Vector2Int> currentPath, Color pathColor)
     {
@@ -34,6 +58,7 @@ public class VisualSystem : MonoBehaviour
         {
             preview.SetActive(false);
         }
+        if (pathColor == Color.white) return;
         for (int i = 0; i < currentPath.Count; i++)
         {
             Vector2Int pos = currentPath[i];
