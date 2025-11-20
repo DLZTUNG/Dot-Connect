@@ -105,6 +105,7 @@ MonoBehaviour:
   colorId: 0
   gridPos: {x: 0, y: 0}
   dotState: 0
+  connection: []
 --- !u!58 &6000601899377355466
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -140,7 +141,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.55
+  m_Radius: 0.75
 --- !u!95 &-2385371298737604178
 Animator:
   serializedVersion: 7

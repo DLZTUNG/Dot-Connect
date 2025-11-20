@@ -2,8 +2,8 @@ public class Enum
 {
     public enum CellState
     {
-        UnOccupied,
-        Occupied,
+        None,
+        Dot,
         Line
     }
     public enum DotState

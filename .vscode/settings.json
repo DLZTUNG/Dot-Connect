@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Dot-Link.slnx"
+    "dotnet.defaultSolution": "Dot Connect.slnx"
 }

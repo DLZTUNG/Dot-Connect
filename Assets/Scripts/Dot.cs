@@ -1,12 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class Dot : MonoBehaviour
 {
     public int colorId;
     public Vector2Int gridPos;
     public Enum.DotState dotState;
-
+    public List<Vector2Int> connection;
     private SpriteRenderer m_sprRdr;
     private Animator m_anim;
     private void Awake()
