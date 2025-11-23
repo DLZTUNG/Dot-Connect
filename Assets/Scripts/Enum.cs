@@ -9,6 +9,7 @@ public class Enum
     public enum DotState
     {
         Idle,
-        Connected
+        StartConnection,
+        EndConnection
     }
 }

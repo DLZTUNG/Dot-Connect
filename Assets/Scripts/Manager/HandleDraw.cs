@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 public class HandleDraw : MonoBehaviour
 {
@@ -11,11 +10,13 @@ public class HandleDraw : MonoBehaviour
     [SerializeField] private Dot m_selectedDot;
     [SerializeField] private List<Vector2Int> m_currentPath;
 
+    [System.Obsolete]
     private void OnEnable()
     {
         m_inputManager.OnSelectDot += HandleSelectDot;
-        m_inputManager.OnDragDot += HandleDragDot;
-        m_inputManager.OnReleaseDot += HandleReleaseDot;
+        m_inputManager.OnSelectLine += HandleSelectLine;
+        m_inputManager.OnDragDot += HandleDragLine;
+        m_inputManager.OnReleaseDot += HandleReleaseLine;
     }
 
     private void HandleSelectDot(Dot dot)
@@ -23,24 +24,51 @@ public class HandleDraw : MonoBehaviour
         m_selectedDot = dot;
         Color dotColor = m_gridManager.colorDict[m_selectedDot.colorId];
         Dot sameDot = m_gridManager.GetSameColorDot(m_selectedDot);
-        //Animation, sau này xử lí ở lớp khác
+
         m_selectedDot.OnSelected();
         sameDot.OnSelected();
 
         if (m_selectedDot.connection.Count > 0 || sameDot.connection.Count > 0) //Có thể một trong hai dot đã nối nhưng dở
         {
-            ResetDot(m_selectedDot);
-            ResetDot(sameDot);
+            ResetDot(m_selectedDot, false);
+            ResetDot(sameDot, false);
         }
         m_currentPath = new List<Vector2Int> { dot.gridPos };
 
         m_visualSystem.CreatePreviewLine(dotColor);
         m_visualSystem.UpdatePreviewLine(GetListCenterPosOfPath(m_currentPath));
-        m_visualSystem.UpdatePathPreview(m_currentPath, m_gridManager.colorDict[m_selectedDot.colorId]);
+        m_visualSystem.UpdatePathPreview(m_currentPath, dotColor);
         m_visualSystem.ShowCursorVisual(true, dotColor);
     }
 
-    private void HandleDragDot()
+    [System.Obsolete]
+    private void HandleSelectLine(Vector2Int gridPos, int gridPosIdx)
+    {
+        m_selectedDot = m_gridManager.GetDotByPosInConnection(gridPos);
+        Color lineColor = m_gridManager.colorDict[m_selectedDot.colorId];
+        Dot sameDot = m_gridManager.GetSameColorDot(m_selectedDot);
+
+        sameDot.OnSelected();
+
+        for (int i = gridPosIdx + 1; i < m_selectedDot.connection.Count; i++)
+            ResetCell(m_selectedDot.connection[i]);
+
+        m_selectedDot.connection.RemoveRange(gridPosIdx + 1, m_selectedDot.connection.Count - 1 - gridPosIdx);
+
+        m_currentPath = new List<Vector2Int>();
+        m_currentPath.AddRange(m_selectedDot.connection);
+
+        //Xoá visual line cũ
+        m_visualSystem.RemoveLinePermByIdx(gridPosIdx, m_selectedDot.colorId, false);
+
+        m_visualSystem.CreatePreviewLine(lineColor);
+        m_visualSystem.UpdatePreviewLine(GetListCenterPosOfPath(m_currentPath));
+        m_visualSystem.UpdatePathPreview(m_currentPath, lineColor);
+        m_visualSystem.ShowCursorVisual(true, lineColor);
+    }
+
+    [System.Obsolete]
+    private void HandleDragLine()
     {
         if (m_selectedDot == null || m_currentPath == null) return;
         int colorId = m_selectedDot.colorId;
@@ -52,6 +80,7 @@ public class HandleDraw : MonoBehaviour
         Vector2Int currentEnd = m_currentPath[m_currentPath.Count - 1];
 
         if (!m_gridManager.IsHoveredValid(hovered) || hovered == currentEnd) return;
+        if (m_currentPath.Count > 1 && m_gridManager.GetDotAt(currentEnd)) return;
 
         bool isAdjacent = Mathf.Abs(hovered.x - currentEnd.x) + Mathf.Abs(hovered.y - currentEnd.y) == 1;
 
@@ -72,61 +101,103 @@ public class HandleDraw : MonoBehaviour
         {
             if (m_gridManager.GetDotAt(hovered)) return;
             //Có thể cắt qua line của 1 dot hoặc line đã nối 2 dot
-            Dot dotCheck1 = m_gridManager.GetDotByPosInConnection(hovered); //Dot chứa line đã cắt
-            if (dotCheck1 == null) return;
-            Dot dotCheck2 = m_gridManager.GetSameColorDot(dotCheck1); //Lấy dot same
+            Dot dotStart = m_gridManager.GetDotByPosInConnection(hovered); //Dot chứa line đã cắt
+            Dot dotEnd = m_gridManager.GetSameColorDot(dotStart); //Lấy dot end của nó
 
-            ResetDot(dotCheck1);
-            ResetDot(dotCheck2);
+
+            //Kiểm tra có hai trường hợp cut, cut một line nối dở hoặc line đã nối xong
+            //-Line nối dở thì gọi hàm cut để xoá các ô bị cắt, cập nhật visual line, giữ nguyên state của dot start
+            //-Line nối hoàn thiện thì gọi hàm, reset state của dot end
+            CutAnotherLine(dotStart.connection, hovered, dotStart.colorId);
+            //ResetDot(dotStart);
+            if (dotEnd.connection.Count > 0)
+                ResetDot(dotEnd, true);
+
             m_currentPath.Add(hovered);
         }
 
-        //Xử lí khi hover sang ô cách xa ô hiện tại, dùng kết hợp pathfinding để linh hoạt
+        //Xử lí khi hover sang ô cách xa ô hiện tại, dùng kết hợp bfs để linh hoạt
         else if (!isAdjacent && m_gridManager.IsCellValidForColor(hovered, colorId))
         {
-            Vector2Int closestPos = m_currentPath[0];
-            int minDistance = Pathfinding.GetDistance(m_currentPath[0], hovered);
+            // =================================================================
+            // Bước 1: Tìm điểm gần nhất trên đường đi hiện tại với hovered
+            // =================================================================
             int closestIndex = 0;
+            float minDistSqr = float.MaxValue;
+            Vector2Int closestPos = m_currentPath[0];
 
-            for (int i = 1; i < m_currentPath.Count; i++)
+            for (int i = 0; i < m_currentPath.Count; i++)
             {
-                int dist = Pathfinding.GetDistance(m_currentPath[i], hovered);
-                if (dist < minDistance)
+                Vector2Int p = m_currentPath[i];
+                float distSqr = (p.x - hovered.x) * (p.x - hovered.x) + (p.y - hovered.y) * (p.y - hovered.y);
+                if (distSqr < minDistSqr)
                 {
-                    minDistance = dist;
-                    closestPos = m_currentPath[i];
+                    minDistSqr = distSqr;
+                    closestPos = p;
                     closestIndex = i;
                 }
             }
 
-            if (minDistance == 0) return;
+            // Nếu chính xác là điểm đã có trên đường → không làm gì
+            if (minDistSqr == 0) return;
 
-            List<Vector2Int> newPathSegment = Pathfinding.FindPath(closestPos, hovered);
+            // =================================================================
+            // Bước 2: Tìm đường mới từ closestPos → hovered
+            // =================================================================
+            var newSegment = BFSFinding.FindPath(
+                startPos: closestPos,
+                endPos: hovered,
+                gridWidth: m_gridManager.GridSizeX,
+                gridHeight: m_gridManager.GridSizeY,
+                canDraw: pos =>
+                {
+                    var cell = m_gridManager.GetCellAt(pos);
+                    // Chỉ đi được nếu:
+                    // - Không phải tường (Dot)
+                    // - Là ô trống HOẶC là chính 2 đầu màu của mình (nếu có)
+                    // - Hoặc là các ô đã nằm trên đường đi hiện tại của mình (cho phép "overwrite" đường cũ)
+                    // - Không được là một ô đã có line và có dot
+                    // Chỉnh sửa điều kiện để giải quyết việc đi chéo
+                    bool isOnCurrentPath = m_currentPath.Contains(pos);
+                    return cell.cellState != Enum.CellState.Dot &&
+                           (cell.cellState == Enum.CellState.None ||
+                            isOnCurrentPath
+                            );
+                }
+            );
 
-            if (newPathSegment != null && newPathSegment.Count > 1)
+            // Không tìm được đường mới
+            if (newSegment == null || newSegment.Count <= 1) return;
+
+            // =================================================================
+            // Bước 3: Kiểm tra toàn bộ đoạn đường mới có hợp lệ không
+            // (không được đi vào đường của màu khác, không trùng đầu màu khác, v.v.)
+            // =================================================================
+            for (int i = 1; i < newSegment.Count - 1; i++) // bỏ 2 đầu vì đã kiểm tra rồi
             {
-                // Kiểm tra segment mới valid (không overlap với path cũ trừ closest)
-                bool isValid = true;
-                for (int i = 1; i < newPathSegment.Count; i++)
-                {
-                    Vector2Int pos = newPathSegment[i];
-                    if (m_currentPath.Contains(pos) || !m_gridManager.IsCellValidForColor(pos, colorId) || m_gridManager.GetCellAt(pos).cellState != Enum.CellState.None)
-                    {
-                        isValid = false;
-                        break;
-                    }
-                }
-                if (isValid)
-                {
-                    // Backtrack: Remove các ô sau closestIndex
-                    if (closestIndex < m_currentPath.Count - 1)
-                    {
-                        m_currentPath.RemoveRange(closestIndex + 1, m_currentPath.Count - closestIndex - 1);
-                    }
+                Vector2Int pos = newSegment[i];
 
-                    // Append segment mới (bỏ closestPos vì đã có)
-                    m_currentPath.AddRange(newPathSegment.GetRange(1, newPathSegment.Count - 1));
+                // Không được đi vào ô đã có màu khác (trừ đường cũ của mình)
+                if (!m_currentPath.Contains(pos) &&
+                    !m_gridManager.IsCellValidForColor(pos, colorId))
+                {
+                    return; // không hợp lệ → hủy
                 }
+            }
+
+            // =================================================================
+            // Bước 4: Áp dụng reroute (cắt đuôi cũ + nối đoạn mới)
+            // =================================================================
+            // Cắt từ closestIndex + 1 trở đi
+            if (closestIndex < m_currentPath.Count - 1)
+            {
+                m_currentPath.RemoveRange(closestIndex + 1, m_currentPath.Count - closestIndex - 1);
+            }
+
+            // Nối đoạn mới vào (bỏ điểm đầu vì đã có)
+            for (int i = 1; i < newSegment.Count; i++)
+            {
+                m_currentPath.Add(newSegment[i]);
             }
         }
 
@@ -135,9 +206,9 @@ public class HandleDraw : MonoBehaviour
         m_visualSystem.ShowCursorVisual(true, currColor);
     }
 
-    private void HandleReleaseDot()
+    private void HandleReleaseLine()
     {
-        if (m_selectedDot == null || m_currentPath == null || m_currentPath.Count < 2)
+        if (m_selectedDot == null || m_currentPath == null || m_currentPath.Count < 1)
         {
             ClearData();
             return;
@@ -166,13 +237,13 @@ public class HandleDraw : MonoBehaviour
         }
 
         //Cập nhật state và connection hiện tại của dot selected
-        m_selectedDot.dotState = Enum.DotState.Connected;
+        m_selectedDot.dotState = Enum.DotState.StartConnection;
         m_selectedDot.connection.AddRange(m_currentPath);
 
         if (endDot != null && endDot.colorId == m_selectedDot.colorId)
         {
             //Nếu nối đúng thì set state và connection cho dot còn lại
-            endDot.dotState = Enum.DotState.Connected;
+            endDot.dotState = Enum.DotState.EndConnection;
             endDot.connection.AddRange(m_currentPath);
             endDot.connection.Reverse();
 
@@ -184,14 +255,17 @@ public class HandleDraw : MonoBehaviour
         {
             Debug.Log("không hợp lệ");
         }
-        m_visualSystem.CreateLinePermanent(GetListCenterPosOfPath(m_currentPath), colorId, lineColor);
+        m_visualSystem.CreateLinePermanent(m_currentPath, GetListCenterPosOfPath(m_currentPath), colorId, lineColor);
         m_visualSystem.UpdatePathPreview(m_currentPath, Color.white);
         m_visualSystem.ShowCursorVisual(false, Color.white);
         ClearData();
     }
 
-    private void ResetDot(Dot dotReset)
+    private void ResetDot(Dot dotReset, bool isCut)
     {
+        //Reset hai trường hợp
+        //- Bị cắt, thì dot truyền vào là dot end sẽ reset hết trạng thái
+        //- Reset khi chạm vào line đã nối hợp lệ để nối lại
         int colorId = dotReset.colorId;
         var connection = dotReset.connection;
 
@@ -213,12 +287,31 @@ public class HandleDraw : MonoBehaviour
             }
             dotReset.connection.Clear();
         }
+        if (!isCut)
+            if (m_visualSystem.permanentLines.TryGetValue(colorId, out LineRenderer old))
+            {
+                Destroy(old.gameObject);
+                m_visualSystem.permanentLines.Remove(colorId);
+            }
+    }
 
-        if (m_visualSystem.permanentLines.TryGetValue(colorId, out LineRenderer old))
-        {
-            Destroy(old.gameObject);
-            m_visualSystem.permanentLines.Remove(colorId);
-        }
+    [System.Obsolete]
+    private void CutAnotherLine(List<Vector2Int> connection, Vector2Int cutPos, int colorId)
+    {
+        int gridPosIdx = connection.IndexOf(cutPos);
+
+        for (int i = gridPosIdx; i < connection.Count; i++)
+            ResetCell(connection[i]);
+
+        connection.RemoveRange(gridPosIdx, connection.Count - gridPosIdx);
+
+        m_visualSystem.RemoveLinePermByIdx(gridPosIdx, colorId, true);
+    }
+
+    private void ResetCell(Vector2Int pos)
+    {
+        m_gridManager.GetCellAt(pos).cellState = Enum.CellState.None;
+        m_gridManager.GridState[pos.x, pos.y] = 0;
     }
 
     private List<Vector3> GetListCenterPosOfPath(List<Vector2Int> path)
@@ -236,10 +329,12 @@ public class HandleDraw : MonoBehaviour
         m_currentPath = null;
     }
 
+    [System.Obsolete]
     private void OnDisable()
     {
         m_inputManager.OnSelectDot -= HandleSelectDot;
-        m_inputManager.OnDragDot -= HandleDragDot;
-        m_inputManager.OnReleaseDot -= HandleReleaseDot;
+        m_inputManager.OnSelectLine -= HandleSelectLine;
+        m_inputManager.OnDragDot -= HandleDragLine;
+        m_inputManager.OnReleaseDot -= HandleReleaseLine;
     }
 }

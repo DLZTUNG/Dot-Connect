@@ -1,0 +1,154 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|D:\\Unity Project\\Advanced Project\\Dot-Connect\\assets\\scripts\\linepreview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\linepreview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|D:\\Unity Project\\Advanced Project\\Dot-Connect\\assets\\scripts\\manager\\visualsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\manager\\visualsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|D:\\Unity Project\\Advanced Project\\Dot-Connect\\assets\\scripts\\manager\\handledraw.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\manager\\handledraw.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|D:\\Unity Project\\Advanced Project\\Dot-Connect\\assets\\scripts\\bfspathfinding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bfspathfinding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|d:\\unity project\\advanced project\\dot-connect\\assets\\scripts\\enum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|D:\\Unity Project\\Advanced Project\\Dot-Connect\\assets\\scripts\\manager\\inputmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\manager\\inputmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|D:\\Unity Project\\Advanced Project\\Dot-Connect\\assets\\scripts\\manager\\gridmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\manager\\gridmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|D:\\Unity Project\\Advanced Project\\Dot-Connect\\assets\\scripts\\manager\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DF928083-A930-8558-CB4C-9180C1B2C6C3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\manager\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Enum.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Enum.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Enum.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Enum.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Enum.cs",
+              "ViewState": "AQIAAAEAAAAAAAAAAAAiwA8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T18:11:21.845Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "HandleDraw.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\HandleDraw.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Manager\\HandleDraw.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\HandleDraw.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Manager\\HandleDraw.cs",
+              "ViewState": "AQIAANwAAAAAAAAAAAASwCEBAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T02:16:44.971Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "VisualSystem.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\VisualSystem.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Manager\\VisualSystem.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\VisualSystem.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Manager\\VisualSystem.cs",
+              "ViewState": "AQIAAGMAAAAAAAAAAAAhwKMAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T07:34:44.446Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "BFSPathfinding.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\BFSPathfinding.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\BFSPathfinding.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\BFSPathfinding.cs",
+              "RelativeToolTip": "Assets\\Scripts\\BFSPathfinding.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAQwCYAAAA2AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T02:31:35.544Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LinePreview.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\LinePreview.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\LinePreview.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\LinePreview.cs",
+              "RelativeToolTip": "Assets\\Scripts\\LinePreview.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAQwDAAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T07:33:01.76Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "InputManager.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\InputManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Manager\\InputManager.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\InputManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Manager\\InputManager.cs",
+              "ViewState": "AQIAACoAAAAAAAAAAAAowEEAAABBAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T07:56:45.328Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "GridManager.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\GridManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Manager\\GridManager.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\GridManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Manager\\GridManager.cs",
+              "ViewState": "AQIAABkBAAAAAAAAAAAgwCAAAABUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T03:15:44.227Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "GameManager.cs",
+              "DocumentMoniker": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\GameManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Manager\\GameManager.cs",
+              "ToolTip": "D:\\Unity Project\\Advanced Project\\Dot-Connect\\Assets\\Scripts\\Manager\\GameManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Manager\\GameManager.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T02:39:27.691Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

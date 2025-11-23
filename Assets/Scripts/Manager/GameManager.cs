@@ -1,3 +1,5 @@
+﻿using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,8 +10,10 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 0;
     }
+
     public void OnRestart()
     {
         SceneManager.LoadScene(0);
     }
 }
+

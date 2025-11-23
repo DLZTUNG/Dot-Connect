@@ -1,3 +1,4 @@
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,8 +14,10 @@ public class VisualSystem : MonoBehaviour
     private LineRenderer m_previewLine;
     private GameObject m_cursorPreviewObj;
     private Dictionary<Vector2Int, GameObject> m_dictCellPreviewObj = new Dictionary<Vector2Int, GameObject>();
-    public Dictionary<int, LineRenderer> permanentLines = new Dictionary<int, LineRenderer>();
     private bool m_isCursorVisible;
+
+
+    public Dictionary<int, LineRenderer> permanentLines = new Dictionary<int, LineRenderer>();
 
     private void Start()
     {
@@ -44,6 +47,19 @@ public class VisualSystem : MonoBehaviour
         UpdateCursorPosition();
     }
 
+    [System.Obsolete]
+    private LinePreview FindLinePreviewWithColorId(int colorId)
+    {
+        LinePreview[] all = FindObjectsOfType<LinePreview>();
+
+        foreach (var line in all)
+        {
+            if (line.lineColorId == colorId)
+                return line;
+        }
+        return null;
+    }
+
     private void UpdateCursorPosition()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -51,6 +67,40 @@ public class VisualSystem : MonoBehaviour
         m_cursorPreviewObj.transform.position = mousePos;
     }
 
+    private void AddPosToLineData(LineRenderer line, List<Vector2Int> pathOnGrid, List<Vector3> pathOnWorld, int colorId)
+    {
+        var lineScript = line.gameObject.GetComponent<LinePreview>();
+
+        if (lineScript.listPosOfLineOnGrid.Count > 0 || lineScript.listPosOfLineOnWorld.Count > 0) return;
+
+        int countPos = pathOnGrid.Count;
+        lineScript.lineColorId = colorId;
+
+        foreach (Vector2Int pos in pathOnGrid)
+            lineScript.listPosOfLineOnGrid.Add(pos);
+        foreach (Vector3 pos in pathOnWorld)
+            lineScript.listPosOfLineOnWorld.Add(pos);
+    }
+    private void SetLinePositions(LineRenderer line, List<Vector3> path)
+    {
+        line.positionCount = path.Count;
+        for (int i = 0; i < path.Count; i++)
+        {
+            line.SetPosition(i, path[i]);
+        }
+    }
+    private void RenewLine(LineRenderer line, int newCount, int count)
+    {
+        Vector3[] pts = new Vector3[count];
+        line.GetPositions(pts);
+
+        Vector3[] newPts = new Vector3[newCount];
+        for (int i = 0; i < newCount; i++)
+            newPts[i] = pts[i];
+
+        line.positionCount = newCount;
+        line.SetPositions(newPts);
+    }
 
     public void UpdatePathPreview(List<Vector2Int> currentPath, Color pathColor)
     {
@@ -80,10 +130,13 @@ public class VisualSystem : MonoBehaviour
         m_previewLine.material = new Material(m_previewLine.material);
         m_previewLine.material.color = color;
     }
-    public void CreateLinePermanent(List<Vector3> currPath, int colorId, Color color)
+    public void CreateLinePermanent(List<Vector2Int> currPathOnGrid, List<Vector3> currPathOnWorld, int colorId, Color color)
     {
         LineRenderer perm = Instantiate(m_previewLinePrb, m_linesParent.transform);
-        SetLinePositions(perm, currPath);
+
+        AddPosToLineData(perm, currPathOnGrid, currPathOnWorld, colorId);
+
+        SetLinePositions(perm, currPathOnWorld);
         perm.startWidth = perm.endWidth = 0.2f;
         perm.material = new Material(perm.material);
         perm.material.color = color;
@@ -94,14 +147,31 @@ public class VisualSystem : MonoBehaviour
         if (m_previewLine == null || currPath == null) return;
         SetLinePositions(m_previewLine, currPath);
     }
-    public void SetLinePositions(LineRenderer line, List<Vector3> path)
+
+    [System.Obsolete]
+    public void RemoveLinePermByIdx(int idx, int colorId, bool isCut)
     {
-        line.positionCount = path.Count;
-        for (int i = 0; i < path.Count; i++)
+        LineRenderer line = FindLinePreviewWithColorId(colorId).GetComponent<LineRenderer>();
+
+        int count = line.positionCount;
+        if (idx < 0) return;
+
+        int newCount;
+        //Cut thì cut tại vị trí trỏ, còn removew giữ lại vị trí trỏ
+        if (isCut)
         {
-            line.SetPosition(i, path[i]);
+            newCount = idx;
+            RenewLine(line, newCount, count);
+            //Update collider 
+            line.gameObject.GetComponent<LinePreview>().RemoveLineCollider(idx);
+        }
+        else
+        {
+            newCount = idx + 1;
+            RenewLine(line, newCount, count);
         }
     }
+
     public void ClearPreview()
     {
         if (m_previewLine != null)

@@ -29,6 +29,9 @@ public class GridManager : MonoBehaviour
     private int[,] m_gridState;
 
     public int[,] GridState { get => m_gridState; set => m_gridState = value; }
+    public int GridSizeX { get => m_gridSizeX; private set => m_gridSizeX = value; }
+    public int GridSizeY { get => m_gridSizeY; private set => m_gridSizeY = value; }
+
     public Dictionary<int, Color> colorDict = new Dictionary<int, Color>()
     {
         {1, Color.red },
@@ -60,12 +63,6 @@ public class GridManager : MonoBehaviour
             {
                 m_visualSystem.GenerateCellVisualGrid(m_gridCells[x, y], new Vector2Int(x, y));
             }
-        }
-
-        Pathfinding.CreateNodesByGrid(m_gridSizeX, m_gridSizeY);
-        foreach (var cell in m_cells)
-        {
-            Pathfinding.ChangeStateNode(cell.gridPos, cell.cellState);
         }
     }
 
@@ -278,7 +275,7 @@ public class GridManager : MonoBehaviour
     {
         foreach (var dot in m_dots)
         {
-            if (dot.connection.Contains(pos))
+            if (dot.connection.Contains(pos) && dot.dotState == Enum.DotState.StartConnection)
                 return dot;
         }
         return null;
