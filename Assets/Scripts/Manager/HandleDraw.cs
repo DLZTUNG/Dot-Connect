@@ -99,7 +99,7 @@ public class HandleDraw : MonoBehaviour
             }
         }
         //Xử lí khi cắt line màu khác
-        else if (isAdjacent && !m_gridManager.IsCellValidForColor(hovered, colorId)) //Không vẽ được màu
+        else if (isAdjacent && !m_gridManager.IsCellValidForColor(hovered, colorId)) // Liền kề và Không vẽ được màu
         {
             if (m_gridManager.GetDotAt(hovered)) return;
             //Có thể cắt qua line của 1 dot hoặc line đã nối 2 dot
@@ -118,9 +118,7 @@ public class HandleDraw : MonoBehaviour
         //Xử lí khi hover sang ô cách xa ô hiện tại, dùng kết hợp bfs để linh hoạt
         else if (!isAdjacent && m_gridManager.IsCellValidForColor(hovered, colorId)) //không liền kề và vẽ được màu
         {
-            // =================================================================
-            // Bước 1: Tìm điểm gần nhất trên đường đi hiện tại với hovered
-            // =================================================================
+            //Tìm vị trí ngắn nhất để tìm đường đi tới hover
             int closestIndex = 0;
             float minDistSqr = float.MaxValue;
             Vector2Int closestPos = m_currentPath[0];
@@ -148,13 +146,9 @@ public class HandleDraw : MonoBehaviour
                 {
                     var cell = m_gridManager.GetCellAt(pos);
                     bool cellHaveDot = m_gridManager.GetDotAt(pos);
-                    // Chỉ đi được nếu:
-                    // - Không phải tường (Dot)
-                    // - Là ô trống HOẶC là chính 2 đầu màu của mình (nếu có)
-                    // - Hoặc là các ô đã nằm trên đường đi hiện tại của mình (cho phép "overwrite" đường cũ)
-                    // - Không được là một ô đã có line và có dot
-                    // Chỉnh sửa điều kiện để giải quyết việc đi chéo
                     bool isOnCurrentPath = m_currentPath.Contains(pos);
+
+
                     return cell.cellState != Enum.CellState.Dot &&
                            (cell.cellState == Enum.CellState.None ||
                             isOnCurrentPath) && !(cell.cellState == Enum.CellState.Line && cellHaveDot);
@@ -162,10 +156,7 @@ public class HandleDraw : MonoBehaviour
 
             if (newSegment == null || newSegment.Count <= 1) return;
 
-            // =================================================================
-            // Bước 3: Kiểm tra toàn bộ đoạn đường mới có hợp lệ không
-            // (không được đi vào đường của màu khác, không trùng đầu màu khác, v.v.)
-            // =================================================================
+            //Kiểm tra segment có chèn vào line khác không
             for (int i = 1; i < newSegment.Count - 1; i++) // bỏ 2 đầu vì đã kiểm tra rồi
             {
                 Vector2Int pos = newSegment[i];
@@ -177,11 +168,7 @@ public class HandleDraw : MonoBehaviour
                     return; // không hợp lệ → hủy
                 }
             }
-
-            // =================================================================
-            // Bước 4: Áp dụng reroute (cắt đuôi cũ + nối đoạn mới)
-            // =================================================================
-            // Cắt từ closestIndex + 1 trở đi
+            //Cắt currentpath cũ để update
             if (closestIndex < m_currentPath.Count - 1)
             {
                 m_currentPath.RemoveRange(closestIndex + 1, m_currentPath.Count - closestIndex - 1);
