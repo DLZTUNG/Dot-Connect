@@ -18,10 +18,11 @@ public class GridManager : MonoBehaviour
     [Header("Grid Settings:")]
     [SerializeField] private int m_gridSizeX;
     [SerializeField] private int m_gridSizeY;
-    [SerializeField] private float m_cellSize;
     [Header("Dot Settings:")]
     [SerializeField] private int m_dotPairCount;
 
+
+    private float m_cellSize = 0.8f;
     private Vector2Int m_unValidVector = new Vector2Int(-1, 1);
     private Transform[,] m_gridCells;
     private List<Cell> m_cells = new List<Cell>();
@@ -31,6 +32,7 @@ public class GridManager : MonoBehaviour
     public int[,] GridState { get => m_gridState; set => m_gridState = value; }
     public int GridSizeX { get => m_gridSizeX; private set => m_gridSizeX = value; }
     public int GridSizeY { get => m_gridSizeY; private set => m_gridSizeY = value; }
+    public float CellSize { get => m_cellSize; private set => m_cellSize = value; }
 
     public Dictionary<int, Color> colorDict = new Dictionary<int, Color>()
     {

@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public class LinePreview : MonoBehaviour
 {
     [SerializeField] private GameObject m_lineColliderPrb;
-    private List<GameObject> m_listColliderObj = new List<GameObject>();
     [SerializeField] private GameObject m_lineColliderParent;
+    private List<GameObject> m_listColliderObj = new List<GameObject>();
 
-
+    public Vector3[] arrPosHadRemove = new Vector3[0];
+    public List<Vector3> listPosHadRemoveOnWorld = new List<Vector3>();
+    public List<Vector2Int> listPosHadRemoveOnGrid = new List<Vector2Int>();
     public List<Vector2Int> listPosOfLineOnGrid = new List<Vector2Int>();
     public List<Vector3> listPosOfLineOnWorld = new List<Vector3>();
     public int lineColorId;
-
     private void Start()
     {
         SetColliderToListPos();
@@ -29,7 +32,6 @@ public class LinePreview : MonoBehaviour
     public Vector2Int GetGridPosFromWorldPos(Vector3 worldPos)
     {
         int idx = listPosOfLineOnWorld.IndexOf(worldPos);
-
         return listPosOfLineOnGrid[idx];
     }
     public void RemoveLineCollider(int posIdx)
@@ -38,7 +40,13 @@ public class LinePreview : MonoBehaviour
         for (int i = posIdx; i < count; i++)
         {
             Destroy(m_listColliderObj[i]);
+            listPosHadRemoveOnWorld.Add(listPosOfLineOnWorld[i]);
+            listPosHadRemoveOnGrid.Add(listPosOfLineOnGrid[i]);
         }
+
+        Vector3[] resultArr = listPosHadRemoveOnWorld.ToArray();
+        arrPosHadRemove = resultArr;
+
         listPosOfLineOnGrid.RemoveRange(posIdx, count - posIdx);
         listPosOfLineOnWorld.RemoveRange(posIdx, count - posIdx);
         m_listColliderObj.RemoveRange(posIdx, count - posIdx);

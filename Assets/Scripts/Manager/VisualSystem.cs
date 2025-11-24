@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class VisualSystem : MonoBehaviour
@@ -16,7 +17,6 @@ public class VisualSystem : MonoBehaviour
     private Dictionary<Vector2Int, GameObject> m_dictCellPreviewObj = new Dictionary<Vector2Int, GameObject>();
     private bool m_isCursorVisible;
 
-
     public Dictionary<int, LineRenderer> permanentLines = new Dictionary<int, LineRenderer>();
 
     private void Start()
@@ -24,6 +24,7 @@ public class VisualSystem : MonoBehaviour
         m_cursorPreviewObj = Instantiate(m_cursorPreviewPrb, transform);
         m_cursorPreviewObj.SetActive(false);
     }
+
     public void GenerateCellVisualGrid(Transform cellTrans, Vector2Int gridPos)
     {
         GameObject cellPreviewObj = Instantiate(m_cellPreviewPrb, m_cellPreviewsParent.transform);
@@ -89,7 +90,7 @@ public class VisualSystem : MonoBehaviour
             line.SetPosition(i, path[i]);
         }
     }
-    private void RenewLine(LineRenderer line, int newCount, int count)
+    private void UpdateLineWhenRemove(LineRenderer line, int newCount, int count)
     {
         Vector3[] pts = new Vector3[count];
         line.GetPositions(pts);
@@ -135,7 +136,6 @@ public class VisualSystem : MonoBehaviour
         LineRenderer perm = Instantiate(m_previewLinePrb, m_linesParent.transform);
 
         AddPosToLineData(perm, currPathOnGrid, currPathOnWorld, colorId);
-
         SetLinePositions(perm, currPathOnWorld);
         perm.startWidth = perm.endWidth = 0.2f;
         perm.material = new Material(perm.material);
@@ -152,23 +152,22 @@ public class VisualSystem : MonoBehaviour
     public void RemoveLinePermByIdx(int idx, int colorId, bool isCut)
     {
         LineRenderer line = FindLinePreviewWithColorId(colorId).GetComponent<LineRenderer>();
-
         int count = line.positionCount;
         if (idx < 0) return;
 
         int newCount;
-        //Cut thì cut tại vị trí trỏ, còn removew giữ lại vị trí trỏ
+        //Cut thì cut tại vị trí trỏ, còn re draw giữ lại vị trí trỏ
         if (isCut)
         {
             newCount = idx;
-            RenewLine(line, newCount, count);
+            UpdateLineWhenRemove(line, newCount, count);
             //Update collider 
             line.gameObject.GetComponent<LinePreview>().RemoveLineCollider(idx);
         }
         else
         {
             newCount = idx + 1;
-            RenewLine(line, newCount, count);
+            UpdateLineWhenRemove(line, newCount, count);
         }
     }
 
