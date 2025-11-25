@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Dot : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer m_borderSpr;
     public int colorId;
     public Vector2Int gridPos;
     public Enum.DotState dotState;
@@ -18,6 +19,9 @@ public class Dot : MonoBehaviour
     {
         if (m_sprRdr == null) return;
         m_sprRdr.color = color;
+        Color tempColor = color;
+        tempColor.a = 0.3f;
+        m_borderSpr.color = tempColor;
     }
 
     public void OnSelected()

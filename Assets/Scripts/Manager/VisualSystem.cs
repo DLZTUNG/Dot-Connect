@@ -156,21 +156,22 @@ public class VisualSystem : MonoBehaviour
         if (idx < 0) return;
 
         int newCount;
-        //Cut thì cut tại vị trí trỏ, còn re draw giữ lại vị trí trỏ
         if (isCut)
         {
-            newCount = idx;
+            newCount = idx; //Cắt thì giữ lại từ idx trở về trước
             UpdateLineWhenRemove(line, newCount, count);
             //Update collider 
             line.gameObject.GetComponent<LinePreview>().RemoveLineCollider(idx);
         }
-        else
+        else //Redraw thì xoá các vị trí sau hover để draw tiếp từ hover
         {
+            //redraw có trường hợp là hover ở cuối, thì không cần xoá gì cả
+            if (idx >= count - 1) return;
+
             newCount = idx + 1;
             UpdateLineWhenRemove(line, newCount, count);
         }
     }
-
     public void ClearPreview()
     {
         if (m_previewLine != null)
